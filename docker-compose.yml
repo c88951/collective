@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  collectiveapi:
+    image: collectiveapi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - Serilog__MinimumLevel__Default=Debug
+      - Serilog__MinimumLevel__Override__Microsoft=Information
+      - Serilog__MinimumLevel__Override__System=Warning
+      # Add connection string for PostgreSQL here
+      # - ConnectionStrings__DefaultConnection=Host=host.docker.internal;Database=collective;Username=postgres;Password=yourpassword
+    networks:
+      - collective-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  collective-network:
+    driver: bridge

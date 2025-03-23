@@ -55,16 +55,6 @@ namespace CollectiveData.Helpers
             };
         }
 
-        public static ApiResponse<T> ServerError(string message = "Internal server error")
-        {
-            return new ApiResponse<T>
-            {
-                Success = false,
-                Message = message,
-                StatusCode = HttpStatusCode.InternalServerError
-            };
-        }
-
         public static ApiResponse<T> Unauthorized(string message = "Unauthorized access")
         {
             return new ApiResponse<T>
@@ -74,15 +64,57 @@ namespace CollectiveData.Helpers
                 StatusCode = HttpStatusCode.Unauthorized
             };
         }
+
+        public static ApiResponse<T> Forbidden(string message = "Access forbidden")
+        {
+            return new ApiResponse<T>
+            {
+                Success = false,
+                Message = message,
+                StatusCode = HttpStatusCode.Forbidden
+            };
+        }
+
+        public static ApiResponse<T> Conflict(string message = "Conflict with current state", List<string>? errors = null)
+        {
+            return new ApiResponse<T>
+            {
+                Success = false,
+                Message = message,
+                StatusCode = HttpStatusCode.Conflict,
+                Errors = errors
+            };
+        }
+
+        public static ApiResponse<T> InternalServerError(string message = "Internal server error", List<string>? errors = null)
+        {
+            return new ApiResponse<T>
+            {
+                Success = false,
+                Message = message,
+                StatusCode = HttpStatusCode.InternalServerError,
+                Errors = errors
+            };
+        }
+
+        public static ApiResponse<T> NoContent(string message = "No content")
+        {
+            return new ApiResponse<T>
+            {
+                Success = true,
+                Message = message,
+                StatusCode = HttpStatusCode.NoContent
+            };
+        }
     }
 
     public class PaginationMetadata
     {
-        public int PageIndex { get; set; }
+        public int CurrentPage { get; set; }
         public int PageSize { get; set; }
         public int TotalCount { get; set; }
         public int TotalPages { get; set; }
-        public bool HasPreviousPage { get; set; }
-        public bool HasNextPage { get; set; }
+        public bool HasPrevious => CurrentPage > 1;
+        public bool HasNext => CurrentPage < TotalPages;
     }
 }
